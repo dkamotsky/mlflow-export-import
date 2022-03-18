@@ -32,8 +32,9 @@ class BaseModelImporter():
         """
         src_current_stage = src_vr["current_stage"]
         dst_source = dst_source.replace("file://","") # OSS MLflow
-        if not dst_source.startswith("dbfs:") and not os.path.exists(dst_source):
-            raise Exception(f"'source' argument for MLflowClient.create_model_version does not exist: {dst_source}")
+        #Denis: our OSS MLflow uses s3:// URLs, which are not covered by this check
+        #if not dst_source.startswith("dbfs:") and not os.path.exists(dst_source):
+        #    raise Exception(f"'source' argument for MLflowClient.create_model_version does not exist: {dst_source}")
         kwargs = {"await_creation_for": self.await_creation_for } if self.await_creation_for else {}
         version = self.mlflow_client.create_model_version(model_name, dst_source, dst_run_id, **kwargs)
         model_utils.wait_until_version_is_ready(self.mlflow_client, model_name, version, sleep_time=sleep_time)
